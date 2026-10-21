@@ -1,0 +1,76 @@
+<!-- Scroll down to the script tag at the bottom of your game.html -->
+<script type="module">
+  // This imports and links your helper file directly into the game!
+  import { questions } from './questions.js';
+
+  let deck = [];
+  let current = 0;
+  let score = 0;
+  let lives = 3;
+  let streak = 0;
+  let bestStreak = 0;
+  let answered = false;
+
+  const \$ = (id) => document.getElementById(id);
+
+  function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
+  function startGame() {
+    deck = shuffle([...questions]);
+    current = 0;
+    score = 0;
+    lives = 3;
+    streak = 0;
+    bestStreak = 0;
+    answered = false;
+
+    \$("restartBtn").classList.add("hidden");
+    \$("nextBtn").classList.add("hidden");
+    \$("answers").classList.remove("hidden");
+
+    updateStats();
+    showQuestion();
+  }
+
+  function updateStats() {
+    \$("score").textContent = score;
+    \$("lives").textContent = "❤️".repeat(lives) + "🖤".repeat(3 - lives);
+    \$("streak").textContent = streak;
+    \$("progress").style.width = (current / deck.length * 100) + "%";
+  }
+
+  function showQuestion() {
+    answered = false;
+    const q = deck[current];
+
+    \$("round").textContent = `QUESTION ${current + 1} OF ${deck.length}`;
+    \$("question").textContent = q.expression;
+    \$("hint").textContent = "Will the result be true or false?";
+    \$("feedback").textContent = "Choose your answer!";
+    \$("nextBtn").classList.add("hidden");
+
+    document.querySelectorAll(".answer").forEach(button => {
+      button.disabled = false;
+    });
+
+    updateStats();
+  }
+
+  function checkAnswer(choice) {
+    if (answered || lives <= 0) return;
+    // ... rest of your game logic continues here
+  }
+
+  // Make functions available globally since we are using modules
+  window.startGame = startGame;
+  window.checkAnswer = checkAnswer;
+  
+  // Start the game automatically when page loads
+  startGame();
+</script>
